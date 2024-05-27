@@ -12,8 +12,8 @@ public class Counter : MonoBehaviour
     private float _currentValue;
 
     public event Action<float> ChangeValue;
+
     public float MinValue => _minValue;
-    public float Step => _step;
 
     private void Start()
     {
