@@ -4,50 +4,59 @@ using UnityEngine;
 
 public class Counter : MonoBehaviour
 {
-    [SerializeField] private float _minValue = 0;
     [SerializeField] private float _step = 1;
     [SerializeField] private float _increaseDuration = 0.5f;
 
-    private bool IsPaused = true;
+    private bool _isPaused = true;
     private float _currentValue;
+    private Coroutine _runningCoroutine;
+    private WaitForSeconds _wait;
 
-    public event Action<float> ChangeValue;
+    public float MinValue = 0;
+    public event Action<float> ValueChanged;
 
-    public float MinValue => _minValue;
 
     private void Start()
     {
-        _currentValue = _minValue;
+        _currentValue = MinValue;
+        _wait = new WaitForSeconds(_increaseDuration);
     }
 
     private void Update()
     {
         if (Input.GetMouseButtonDown(0))
         {
-            ToggleCounter();
+            _isPaused = !_isPaused;
+
+            if (_isPaused == false)
+            {
+                StartCounter();
+            }
+            else
+            {
+                PauseCounter();
+            }
         }   
     }
 
-    private void ToggleCounter()
+    private void StartCounter()
     {
-        IsPaused = !IsPaused;
+        _runningCoroutine = StartCoroutine(IncreaseCounter());
+    }
 
-        if (IsPaused == false)
-        {
-            StartCoroutine(IncreaseCounter());
-        }
+    private void PauseCounter()
+    {
+        StopCoroutine(_runningCoroutine);
     }
 
     private IEnumerator IncreaseCounter()
     {
-        while (IsPaused == false)
+        while (true)
         {
-            var wait = new WaitForSeconds(_increaseDuration);
             float previousValue = _currentValue;
-            float intermediateValue = previousValue + _step;
-            _currentValue = intermediateValue;
-            ChangeValue(_currentValue);
-            yield return wait;
+            _currentValue = previousValue + _step;
+            ValueChanged?.Invoke(_currentValue);
+            yield return _wait;
         }
     }
 }
