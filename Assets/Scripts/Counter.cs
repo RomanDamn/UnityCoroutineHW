@@ -15,7 +15,6 @@ public class Counter : MonoBehaviour
     public float MinValue = 0;
     public event Action<float> ValueChanged;
 
-
     private void Start()
     {
         _currentValue = MinValue;
@@ -36,7 +35,7 @@ public class Counter : MonoBehaviour
             {
                 PauseCounter();
             }
-        }   
+        }
     }
 
     private void StartCounter()
